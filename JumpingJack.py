@@ -1,3 +1,7 @@
+#!/usr/bin/python3
+#
+# Jumping Jack game written in Python 3 and using PyGame module
+
 import pygame, itertools, sys
 from pygame import *
 
@@ -43,8 +47,7 @@ def button(text, colorname, x, y, w, h, tx, ty):
             pygame.draw.rect(window, eval("light_"+colorname), [x, y, w, h])
             display_text(text, (tx, ty), "res/SansPosterBold.ttf", "black", 40)
 
-            if click[0]:
-                return True
+            if click[0]: return True
 
 """
     Function to display text on any surface, provided the co-ordinates,
@@ -77,10 +80,8 @@ def mainmenu():
         if quitbutton:
             pygame.quit()
             sys.exit()
-        elif play:
-            gameloop()
-        elif highscore:
-            highscores()
+        elif play: gameloop()
+        elif highscore: highscores()
 
         pygame.display.update()
 
@@ -144,8 +145,10 @@ def win(time):
     gscore = score(time)
     while run:
         for event in pygame.event.get():
+                # Quit when the user clicks the exit button
                 if event.type == pygame.QUIT:
-                    run = False                 # Quit when the user clicks the exit button
+                    run = False
+                    break
 
         bg = pygame.image.load("res/bg_game.png")
         window.blit(bg, (0, 0))
@@ -157,35 +160,23 @@ def win(time):
 
 """
     Function to calculate score based on number of seconds taken to win the game
-    TODO: More efficient, algorithmic way of calculating score
+    TODO: Implement a proper algorithm for calculating score
 """
 def score(time):
     secs = time//1000
 
-    if secs in range(0, 20):
-        score = 500
-    elif secs in range(20, 30):
-        score = 400
-    elif secs in range(30, 40):
-        score = 350
-    elif secs in range(40, 50):
-        score = 300
-    elif secs in range(50, 60):
-        score = 250
-    elif secs in range(60, 70):
-        score = 200
-    elif secs in range(70, 80):
-        score = 150
-    elif secs in range(80, 90):
-        score = 100
-    elif secs in range(90, 100):
-        score = 50
-    elif secs in range(100, 120):
-        score = 30
-    elif secs in range(120, 150):
-        score = 20
-    else:
-        score = 10
+    if secs in range(0, 20): score = 500
+    elif secs in range(20, 30): score = 400
+    elif secs in range(30, 40): score = 350
+    elif secs in range(40, 50): score = 300
+    elif secs in range(50, 60): score = 250
+    elif secs in range(60, 70): score = 200
+    elif secs in range(70, 80): score = 150
+    elif secs in range(80, 90): score = 100
+    elif secs in range(90, 100): score = 50
+    elif secs in range(100, 120): score = 30
+    elif secs in range(120, 150): score = 20
+    else: score = 10
 
     # Create if doesnt exist and append the score to res/scores.txt
     scores = open("res/scores.txt","a+")
@@ -202,7 +193,8 @@ def highscores():
     while run:
         for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    run = False                 # Quit when the user clicks the exit button
+                    run = False
+                    break
 
         bg = pygame.image.load("res/bg_game.png")
         window.blit(bg, (0, 0))
@@ -211,20 +203,17 @@ def highscores():
 
         # Read the scores.txt file which has all scores saved in it
         try:
-            scorelist = open("res/scores.txt","r+")
+            with open("res/scores.txt","r") as scores_file:
+                scores = scores_file.read().split()
         except FileNotFoundError:
-            scorelist = open("res/scores.txt","a+")
-
-        for score in scorelist:
-            if len(scores)<6 and score != '\n':
-                scores.append(int(score))
+            pass
 
         # Append score '0' if score doesnt exist (min 5 scores needed)
         if len(scores)<5:
             while len(scores)<6:
                 scores.append(0)
 
-        scores.sort(reverse=True)
+        scores.sort(reverse=True, key=int)
 
         display_text('HIGH SCORES:', (450, 210), "res/SansPosterBold.ttf", "orange", 50)
 
